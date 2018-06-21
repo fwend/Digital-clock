@@ -40,8 +40,6 @@ leds.push(new Led(0, 8, 1, -1, 2));
 leds.push(new Led(8, 8, 1, 1, 2));
 leds.push(new Led(0, 16, 0, 0, 3));
 
-var onColor, offColor;
-
 function drawDigitalClock(color1, color2, size) {
 
     var clockWidth = (6 * 15 + 2 * 10) * size;
@@ -113,4 +111,4 @@ function drawLed(x, y, size, vertices) {
     g.fill();
 }
 
-setInterval(drawDigitalClock, 1000, '#00FF00', '#002200', 12);
+setInterval(drawDigitalClock, 1000, onColor, offColor, 12);
