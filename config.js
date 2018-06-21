@@ -1,0 +1,1 @@
+var onColor = '#00FF00', offColor = '#002200';
