@@ -1,15 +1,17 @@
-var canvas = document.querySelector('canvas');
+import config from './config.js'
+
+const canvas = document.querySelector('canvas');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-var g = canvas.getContext('2d');
+const g = canvas.getContext('2d');
 
 // which leds are on or off for each digit
-var masks = ['1110111', '0010010', '1011101', '1011011', '0111010',
+const masks = ['1110111', '0010010', '1011101', '1011011', '0111010',
     '1101011', '1101111', '1010010', '1111111', '1111011'];
 
 // horizontal and vertical layouts in scalable units
-var vertices = [
+const vertices = [
     [
         [0, 0], [1, 1], [7, 1], [8, 0], [7, -1], [1, -1]
     ],
@@ -31,7 +33,7 @@ function Led(x, y, idx, ox, oy) {
     this.offset_y = oy;
 }
 
-var leds = [];
+const leds = [];
 leds.push(new Led(0, 0, 0, 0, -1));
 leds.push(new Led(0, 0, 1, -1, 0));
 leds.push(new Led(8, 0, 1, 1, 0));
@@ -40,20 +42,17 @@ leds.push(new Led(0, 8, 1, -1, 2));
 leds.push(new Led(8, 8, 1, 1, 2));
 leds.push(new Led(0, 16, 0, 0, 3));
 
-function drawDigitalClock(color1, color2, size) {
+function drawDigitalClock(size) {
 
-    var clockWidth = (6 * 15 + 2 * 10) * size;
-    var clockHeight = 20 * size;
-    var x = (canvas.width - clockWidth) / 2;
-    var y = (canvas.height - clockHeight) / 2;
-
-    onColor = color1;
-    offColor = color2;
+    const clockWidth = (6 * 15 + 2 * 10) * size;
+    const clockHeight = 20 * size;
+    let x = (canvas.width - clockWidth) / 2;
+    const y = (canvas.height - clockHeight) / 2;
 
     g.clearRect(0, 0, canvas.width, canvas.height);
 
-    var date = new Date();
-    var segments = [date.getHours(), date.getMinutes(), date.getSeconds()];
+    const date = new Date();
+    const segments = [date.getHours(), date.getMinutes(), date.getSeconds()];
 
     segments.forEach(function (value, index) {
         x = drawDigits(x, y, size, value);
@@ -65,8 +64,8 @@ function drawDigitalClock(color1, color2, size) {
 
 function drawDigits(x, y, size, timeUnit) {
 
-    var digit1 = Math.floor(timeUnit / 10);
-    var digit2 = timeUnit % 10;
+    const digit1 = Math.floor(timeUnit / 10);
+    const digit2 = timeUnit % 10;
 
     x = drawLeds(x, y, size, masks[digit1]);
     x = drawLeds(x, y, size, masks[digit2]);
@@ -76,7 +75,7 @@ function drawDigits(x, y, size, timeUnit) {
 
 function drawSeparator(x, y, size) {
 
-    g.fillStyle = onColor;
+    g.fillStyle = config.onColor;
     g.fillRect(x + 0.5 * size, y + 3 * size, 2 * size, 2 * size);
     g.fillRect(x + 0.5 * size, y + 10 * size, 2 * size, 2 * size);
 
@@ -87,10 +86,10 @@ function drawLeds(x, y, size, mask) {
 
     leds.forEach(function (led, i) {
 
-        g.fillStyle = mask[i] == '1' ? onColor : offColor;
+        g.fillStyle = mask[i] === '1' ? config.onColor : config.offColor;
 
-        var xx = x + led.x * size + led.offset_x;
-        var yy = y + led.y * size + led.offset_y;
+        const xx = x + led.x * size + led.offset_x;
+        const yy = y + led.y * size + led.offset_y;
 
         drawLed(xx, yy, size, vertices[led.idx]);
     });
@@ -111,4 +110,4 @@ function drawLed(x, y, size, vertices) {
     g.fill();
 }
 
-setInterval(drawDigitalClock, 1000, onColor, offColor, 12);
+setInterval(drawDigitalClock, 1000, config.size);
